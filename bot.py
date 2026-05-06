@@ -25,7 +25,7 @@ def get_ai_reply(msg):                                         try:
 # 🔐 Login command
 async def login(update: Update, context: ContextTypes.DEFA>
     if len(context.args) != 2:
-        await update.message.reply_text("Use: /login id pa>
+        await update.message.reply_text("Use: /login id password")
         return                                             
     username, password = context.args
 
