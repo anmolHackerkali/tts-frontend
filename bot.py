@@ -3,7 +3,7 @@ from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, fil
 import google.generativeai as genai
 
 # 🔑 Yahan apni keys daalo (IMPORTANT: quotes lagana)
-TELEGRAM_TOKEN = "8208657265:AAEsHI7aWBDOIhA3dsWspoQH-4i3b"
+TELEGRAM_TOKEN = "8203672663:AAFjk_ovoZFcTPp-8M_8seUoK_a1S68XaMw"
 GEMINI_API_KEY = "AIzaSyCKxA-s6meMq-2j9Bi_vqkCDY1Y6y7JcfA"
 
 # Gemini setup
