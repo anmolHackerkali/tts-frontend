@@ -1,9 +1,9 @@
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandle>
+from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
 import google.generativeai as genai
 
-# 🔑 Yahan apni keys daalo
-TELEGRAM_TOKEN = "8208657265:AAEsHI7aWBDOIhA3dsWspoQH-4i3b">
+# 🔑 Yahan apni keys daalo (IMPORTANT: quotes lagana)
+TELEGRAM_TOKEN = "8208657265:AAEsHI7aWBDOIhA3dsWspoQH-4i3b"
 GEMINI_API_KEY = "AIzaSyCKxA-s6meMq-2j9Bi_vqkCDY1Y6y7JcfA"
 
 # Gemini setup
@@ -17,30 +17,33 @@ PASSWORD = "Hacker0000"
 logged_in_users = {}
 
 # 🤖 AI function
-def get_ai_reply(msg):                                         try:
+def get_ai_reply(msg):
+    try:
         response = model.generate_content(msg)
-        return response.text                                   except Exception as e:
-        return "AI error: " + str(e)
+        return response.text
+    except Exception as e:
+        return "Error: " + str(e)
 
 # 🔐 Login command
-async def login(update: Update, context: ContextTypes.DEFA>
+async def login(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) != 2:
         await update.message.reply_text("Use: /login id password")
-        return                                             
+        return
+
     username, password = context.args
 
     if username == USERNAME and password == PASSWORD:
         logged_in_users[update.effective_user.id] = True
-        await update.message.reply_text("✅ Login successf>
+        await update.message.reply_text("✅ Login successful!")
     else:
-        await update.message.reply_text("❌ Wrong ID/Passw>
+        await update.message.reply_text("❌ Wrong ID/Password")
 
 # 💬 Message handler
-async def handle_message(update: Update, context: ContextT>
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     if not logged_in_users.get(user_id):
-        await update.message.reply_text("🔐 Login first: />
+        await update.message.reply_text("🔐 Please login first: /login id password")
         return
 
     msg = update.message.text
@@ -49,20 +52,21 @@ async def handle_message(update: Update, context: ContextT>
     await update.message.reply_text(reply)
 
 # 📸 File/Image handler
-async def handle_file(update: Update, context: ContextType>
+async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     if not logged_in_users.get(user_id):
         await update.message.reply_text("🔐 Login first")
         return
 
-    await update.message.reply_text("📁 File/Image receive>
+    await update.message.reply_text("📁 File/Image received!")
 
-# ▶️ Bot start
+# ▶️ Start bot
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
 app.add_handler(CommandHandler("login", login))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COM>
-app.add_handler(MessageHandler(filters.PHOTO | filters.Doc>
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+app.add_handler(MessageHandler(filters.PHOTO | filters.Document.ALL, handle_file))
+
 print("🤖 Bot running...")
 app.run_polling()
